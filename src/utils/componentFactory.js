@@ -443,12 +443,6 @@ function createTicketDepartmentMenu(corporation) {
           value: 'perfil',
           description: 'Nome, passaporte ou dados do RP.',
           emoji: whiteEmoji('idcard'),
-        },
-        {
-          label: 'Corregedoria',
-          value: 'corregedoria',
-          description: 'Assuntos internos e denúncias contra oficiais.',
-          emoji: whiteEmoji('user'),
         }
       )
   );
@@ -469,12 +463,6 @@ function createTicketPanelButtons() {
       customId: 'ticket_abrir_denuncia',
       label: 'Denúncia',
       emoji: whiteEmoji('stop'),
-      style: ButtonStyle.Secondary,
-    },
-    {
-      customId: 'ticket_abrir_corregedoria',
-      label: 'Corregedoria',
-      emoji: whiteEmoji('user'),
       style: ButtonStyle.Secondary,
     },
   ]);
@@ -505,8 +493,7 @@ function createTicketPanelContainer(corporation) {
         `${withWhiteIcon('idcard', '**Departamentos disponiveis**')}\n` +
         '- **Suporte Geral:** duvidas, solicitacoes e orientacao.\n' +
         '- **Denuncia:** relato de ocorrencias, infracoes e envio de provas.\n' +
-        '- **Atualizacao de Registro:** correcao de nome, passaporte ou dados do RP.\n' +
-        '- **Corregedoria:** assuntos internos e conduta de oficiais.'
+        '- **Atualizacao de Registro:** correcao de nome, passaporte ou dados do RP.'
       )
     )
     .addSeparatorComponents(
@@ -570,8 +557,7 @@ function createUnifiedTicketPanelContainer() {
         `${withWhiteIcon('clipboard', '**Departamentos por corporacao**')}\n` +
         '- **Suporte Geral:** duvidas, solicitacoes e orientacao.\n' +
         '- **Denuncia:** relato de ocorrencias, infracoes e envio de provas.\n' +
-        '- **Atualizacao de Registro:** correcao de nome, passaporte ou dados do RP.\n' +
-        '- **Corregedoria:** assuntos internos e conduta de oficiais.'
+        '- **Atualizacao de Registro:** correcao de nome, passaporte ou dados do RP.'
       )
     )
     .addSeparatorComponents(
