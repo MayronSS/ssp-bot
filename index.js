@@ -97,28 +97,21 @@ async function registerCommands(commandsData) {
 async function init() {
   console.log('\n');
   console.log('═══════════════════════════════════════');
-  console.log('         LSPD System • Bot v2.0        ');
+  console.log('    SSP • Secretaria de Segurança Pública    ');
   console.log('═══════════════════════════════════════');
   console.log('');
 
-  // 1. Conectar ao MongoDB
+  // 1. Iniciar o servidor HTTP IMEDIATAMENTE (Discloud precisa da porta ativa)
+  startApiServer(client);
+
+  // 2. Conectar ao MongoDB
   await connectDatabase();
 
-  // 2. Carregar comandos
+  // 3. Carregar comandos
   const commandsData = loadCommands();
 
-  // 3. Carregar eventos
+  // 4. Carregar eventos
   loadEvents();
-
-  // 4. Configurar inicialização da API do Bate-ponto
-  const startApi = () => {
-    if (!client.apiServerStarted) {
-      client.apiServerStarted = true;
-      startApiServer(client);
-    }
-  };
-  client.once('ready', startApi);
-  client.once('clientReady', startApi);
 
   // 5. Login no Discord
   logger.info('Conectando ao Discord...');
@@ -126,11 +119,6 @@ async function init() {
 
   // 6. Registrar slash commands
   await registerCommands(commandsData);
-
-  // Fallback caso a conexão já estivesse pronta
-  if (client.isReady()) {
-    startApi();
-  }
 }
 
 init().catch((error) => {

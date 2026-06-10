@@ -27,8 +27,28 @@ function startApiServer(client) {
       return;
     }
 
+    // Health Check — GET / ou GET /api/health
+    if (req.method === 'GET' && (req.url === '/' || req.url === '/api/health')) {
+      res.writeHead(200);
+      res.end(JSON.stringify({ 
+        success: true, 
+        service: 'SSP Bot — API de Bate-Ponto',
+        status: 'online',
+        discord: client.isReady() ? 'connected' : 'connecting',
+        timestamp: new Date().toISOString()
+      }));
+      return;
+    }
+
     // Aceitar apenas POST /api/duty
     if (req.url === '/api/duty' && req.method === 'POST') {
+      // 0. Verificar se o Discord está pronto
+      if (!client.isReady()) {
+        res.writeHead(503);
+        res.end(JSON.stringify({ success: false, message: 'Bot ainda está iniciando. Tente novamente em alguns segundos.' }));
+        return;
+      }
+
       // 1. Validar Token de Autorização
       const authHeader = req.headers['authorization'];
       const expectedAuth = `Bearer ${apiKey}`;
