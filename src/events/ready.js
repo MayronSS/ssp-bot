@@ -3,6 +3,7 @@ const logger = require('../utils/logger');
 const env = require('../config/env');
 const disciplinaryService = require('../services/disciplinaryService');
 const corporationService = require('../services/corporationService');
+const { startPontoWatcher } = require('../services/pontoWatcher');
 
 /**
  * Evento ready — executado quando o bot fica online.
@@ -66,6 +67,9 @@ module.exports = {
     }, 15000);
 
     disciplinaryService.startWarningExpiryScheduler(client);
+
+    // Iniciar monitoramento automático do ponto (integração FiveM)
+    startPontoWatcher(client);
 
     logger.success('Bot pronto para operar!');
   },
