@@ -57,10 +57,10 @@ const env = {
   TICKET_AI_COOLDOWN_MS: process.env.TICKET_AI_COOLDOWN_MS,
   TICKET_AI_REPORT_ENABLED: process.env.TICKET_AI_REPORT_ENABLED,
 
-  // API do Bate-Ponto
-  PONTO_API_PORT: process.env.PORT || process.env.PONTO_API_PORT || 3000,
+  // API do Bate-Ponto (Discloud TYPE=site requer porta 8080)
+  PONTO_API_PORT: process.env.PORT || process.env.PONTO_API_PORT || 8080,
   PONTO_API_KEY: process.env.PONTO_API_KEY || 'lspd_ponto_secret_token_change_me',
-  PONTO_API_HOST: process.env.PONTO_API_HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1'),
+  PONTO_API_HOST: process.env.PONTO_API_HOST || '0.0.0.0',
 };
 
 // Validação de variáveis obrigatórias
