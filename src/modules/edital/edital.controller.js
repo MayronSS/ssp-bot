@@ -297,7 +297,7 @@ async function createPreApprovalTicket(interaction, { candidateId, citizen, nome
       return { channel: null, ticket: null };
     }
 
-    const created = await ticketsService.createTicketChannel(guild, candidateUser, 'recrutamento', '1508542796146016396', corpSlug || 'pmesp');
+    const created = await ticketsService.createTicketChannel(guild, candidateUser, 'recrutamento', env.CATEGORY_TICKETS || '1510831160660590652', corpSlug || 'pmesp');
     channel = created.channel;
     ticket = created.ticket;
     staffRole = created.staffRole;
@@ -345,7 +345,7 @@ async function handleStart(interaction, corpSlug) {
   }
   
   try {
-    const channel = await createEditalChannel(guild, user, '1523484704295096450', finalCorpSlug);
+    const channel = await createEditalChannel(guild, user, env.CATEGORY_EDITAL || '1523484704295096450', finalCorpSlug);
     
     const newDraft = {
       channelId: channel.id,
@@ -622,8 +622,8 @@ async function handleConfirmarCanal(interaction) {
   const canalChKey = corpSlug === 'pmesp' ? 'editalAvaliacaoPmesp' : 'editalAvaliacaoPcesp';
   const canalChName = corpSlug === 'pmesp' ? '📄・avaliacao-pmesp' : '📄・avaliacao-pcesp';
 
-  const canalAvaliacaoId = await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalAvaliacao')
-    || await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+  const canalAvaliacaoId = await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+    || await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalAvaliacao')
     || await require('../../services/configService').getChannel(interaction.guild.id, canalChKey);
 
   let canalAvaliacao = canalAvaliacaoId ? interaction.guild.channels.cache.get(canalAvaliacaoId) : null;
@@ -749,8 +749,8 @@ async function handleApprove(interaction) {
   const canalChKey = corpSlug === 'pmesp' ? 'editalResultadosPmesp' : 'editalResultadosPcesp';
   const canalChName = corpSlug === 'pmesp' ? '📄・resultados-pmesp' : '📄・resultados-pcesp';
 
-  const canalResultadosId = await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalResultados')
-    || await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+  const canalResultadosId = await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+    || await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalResultados')
     || await require('../../services/configService').getChannel(interaction.guild.id, canalChKey);
 
   let canalResultados = canalResultadosId ? interaction.guild.channels.cache.get(canalResultadosId) : null;
@@ -869,8 +869,8 @@ async function handleReject(interaction) {
   const canalChKey = corpSlug === 'pmesp' ? 'editalResultadosPmesp' : 'editalResultadosPcesp';
   const canalChName = corpSlug === 'pmesp' ? '📄・resultados-pmesp' : '📄・resultados-pcesp';
 
-  const canalResultadosId = await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalResultados')
-    || await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+  const canalResultadosId = await corporationService.getChannel(interaction.guild.id, corpSlug, canalChKey)
+    || await corporationService.getChannel(interaction.guild.id, corpSlug, 'editalResultados')
     || await require('../../services/configService').getChannel(interaction.guild.id, canalChKey);
 
   let canalResultados = canalResultadosId ? interaction.guild.channels.cache.get(canalResultadosId) : null;
