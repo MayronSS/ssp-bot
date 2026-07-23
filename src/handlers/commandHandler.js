@@ -6,6 +6,15 @@ const { EPHEMERAL_REPLY } = require('../utils/interactionOptions');
  * Busca o comando na collection do client e executa.
  */
 async function commandHandler(interaction) {
+  const allowedUserId = process.env.SETUP_ALLOWED_USER_ID || '896063696567152671';
+  if (interaction.user.id !== allowedUserId) {
+    const { createErrorEmbed } = require('../utils/createEmbed');
+    return interaction.reply({
+      embeds: [createErrorEmbed('Acesso Negado', 'Você não possui permissão para executar comandos deste bot.')],
+      ...EPHEMERAL_REPLY,
+    });
+  }
+
   const command = interaction.client.commands.get(interaction.commandName);
 
   if (!command) {
