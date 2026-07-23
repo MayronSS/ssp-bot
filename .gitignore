@@ -1,0 +1,21 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (contém token e IDs sensíveis)
+.env
+
+# Dados de persistência local
+data/
+
+# Logs
+logs/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar o Painel e arquivos temporários no repositório do Bot
+PAINEL LSPD/
+src.zip
+discloud/
+
