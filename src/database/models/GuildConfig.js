@@ -43,7 +43,8 @@ const guildConfigSchema = new mongoose.Schema({
     solicitacoesInternas: { type: String, default: '' },
     blacklist: { type: String, default: '' },
     sugestoes: { type: String, default: '' },
-    hierarchy: { type: String, default: '' }
+    hierarchy: { type: String, default: '' },
+    ftHierarchy: { type: String, default: '' }
   },
   roles: {
     lspdGeral: { type: String, default: '' },

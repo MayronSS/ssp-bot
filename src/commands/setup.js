@@ -30,7 +30,6 @@ module.exports = {
           { name: 'Solicitações Internas', value: 'solicitacoes' },
           { name: 'Exonerações', value: 'exoneracoes' },
           { name: 'Transferências', value: 'transferencias' },
-          { name: 'Força Tática (Painel)', value: 'forca_tatica' },
           { name: 'Hierarquia', value: 'hierarchy' },
           { name: 'Todos', value: 'todos' }
         )
@@ -43,7 +42,8 @@ module.exports = {
         .addChoices(
           { name: 'Unificado (SSP)', value: 'unificado' },
           { name: 'PMESP - Polícia Militar', value: 'pmesp' },
-          { name: 'PCESP - Polícia Civil', value: 'pcesp' }
+          { name: 'PCESP - Polícia Civil', value: 'pcesp' },
+          { name: 'FT - Força Tática', value: 'ft' }
         )
     ),
 
@@ -137,11 +137,6 @@ module.exports = {
         results.push(result);
       }
 
-      if (modulo === 'forca_tatica' || modulo === 'todos') {
-        const result = await setupForcaTatica(interaction);
-        results.push(result);
-      }
-
       if (modulo === 'hierarchy' || modulo === 'todos') {
         const result = await setupHierarchy(interaction, corporation, isUnified);
         results.push(result);
@@ -177,6 +172,13 @@ async function resolveCorpChannel(guild, corporation, channelKey, nameFallback) 
     // Caso especial solicitado pelo usuário: hierarquia da polícia civil (PCESP) no canal 1510857782025257121
     if (corporation.slug === 'pcesp' && channelKey === 'hierarchy') {
       const targetChannelId = '1510857782025257121';
+      const chan = guild.channels.cache.get(targetChannelId) || await guild.channels.fetch(targetChannelId).catch(() => null);
+      if (chan) return chan;
+    }
+
+    // Caso especial solicitado pelo usuário: hierarquia da Força Tática (FT) no canal 1510846517752369172
+    if (corporation.slug === 'ft' && channelKey === 'hierarchy') {
+      const targetChannelId = process.env.CHANNEL_FT_PANEL || process.env.CHANNEL_FT_HIERARCHY || '1510846517752369172';
       const chan = guild.channels.cache.get(targetChannelId) || await guild.channels.fetch(targetChannelId).catch(() => null);
       if (chan) return chan;
     }
@@ -475,32 +477,6 @@ async function setupTransferencias(interaction, corporation, isUnified) {
   return `✅ **Transferências:** Painel enviado em <#${targetChannel.id}>`;
 }
 
-/**
- * Envia o painel da Força Tática no canal dedicado.
- * O canal é fixo (CHANNEL_FT_PANEL) e não depende de corporação.
- */
-async function setupForcaTatica(interaction) {
-  const env = require('../config/env');
-  const ftChannelId = env.CHANNEL_FT_PANEL;
-
-  if (!ftChannelId) {
-    return '⚠️ **Força Tática:** Canal não configurado (CHANNEL_FT_PANEL ausente no .env).';
-  }
-
-  const targetChannel = interaction.guild.channels.cache.get(ftChannelId)
-    || await interaction.guild.channels.fetch(ftChannelId).catch(() => null);
-
-  if (!targetChannel) {
-    return '⚠️ **Força Tática:** Canal não encontrado no servidor.';
-  }
-
-  await clearBotMessages(targetChannel, interaction.client.user.id, 'força tática');
-
-  await targetChannel.send(componentFactory.createFtPanelPayload());
-
-  logger.success(`Painel da Força Tática enviado em #${targetChannel.name}`);
-  return `✅ **Força Tática:** Painel enviado em <#${targetChannel.id}>`;
-}
 
 async function setupHierarchy(interaction, corporation, isUnified) {
   const targetChannel = await resolveCorpChannel(

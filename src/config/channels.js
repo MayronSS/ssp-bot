@@ -18,4 +18,5 @@ module.exports = {
   ausenciaLogs: env.CHANNEL_AUSENCIA_LOGS,
   warningPanel: env.CHANNEL_WARNING_PANEL,
   ftPanel: env.CHANNEL_FT_PANEL,
+  ftHierarchy: env.CHANNEL_FT_HIERARCHY || env.CHANNEL_FT_PANEL || '1510846517752369172',
 };

@@ -168,12 +168,14 @@ async function performUpdate(guild) {
     const config = await GuildConfig.findOne({ guildId: guild.id });
     const channelId = config?.channels?.hierarchy || '1510995302856003776';
     const pcespChannelId = '1510857782025257121';
+    const ftChannelId = config?.channels?.ftHierarchy || process.env.CHANNEL_FT_PANEL || process.env.CHANNEL_FT_HIERARCHY || '1510846517752369172';
     
     const mainChannel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
     const pcespChannel = guild.channels.cache.get(pcespChannelId) || await guild.channels.fetch(pcespChannelId).catch(() => null);
+    const ftChannel = guild.channels.cache.get(ftChannelId) || await guild.channels.fetch(ftChannelId).catch(() => null);
     
-    if (!mainChannel && !pcespChannel) {
-      logger.warn(`Canais de Hierarquia (Geral: ${channelId}, PCESP: ${pcespChannelId}) não configurados ou não encontrados.`);
+    if (!mainChannel && !pcespChannel && !ftChannel) {
+      logger.warn(`Canais de Hierarquia (Geral: ${channelId}, PCESP: ${pcespChannelId}, FT: ${ftChannelId}) não configurados ou não encontrados.`);
       return;
     }
 
@@ -191,6 +193,7 @@ async function performUpdate(guild) {
 
     await clearBotMessages(mainChannel);
     await clearBotMessages(pcespChannel);
+    await clearBotMessages(ftChannel);
 
     // 2. Carregar todas as corporações do banco
     const allCorps = await Corporation.find({ guildId: guild.id, active: true });
@@ -239,7 +242,8 @@ async function performUpdate(guild) {
       // A. Verificar se pertence a algum batalhão (tags/secundárias)
       const tagCorps = sortedCorps.filter(c => c.type === 'tag');
       for (const corp of tagCorps) {
-        const hasRole = corp.roles?.geral && m.roles.cache.has(corp.roles.geral);
+        const roleId = corp.roles?.geral || FALLBACK_BATTALION_ROLES[corp.slug];
+        const hasRole = roleId && m.roles.cache.has(roleId);
         if (hasRole) {
           const parentCorp = corp.inheritsFrom ? corpsMap.get(corp.inheritsFrom) : null;
           const rank = resolveRank(m, corp, parentCorp);
@@ -282,6 +286,7 @@ async function performUpdate(guild) {
     // 4. Construir os embeds
     const embedsToSendMain = [];
     const embedsToSendPcesp = [];
+    const embedsToSendFt = [];
 
     for (const corp of sortedCorps) {
       const data = corpMembers.get(corp.slug);
@@ -311,6 +316,7 @@ async function performUpdate(guild) {
           const section = formatGroupedSection(data.regular, guild, {
             forceBattalionLabel: corp.shortName.toUpperCase(),
             battalionCmdRoleId: BATTALION_COMMAND_ROLE_ID,
+            battalionSubCmdRoleId: BATTALION_SUB_COMMAND_ROLE_ID,
           });
           sections.push(section);
         }
@@ -329,7 +335,17 @@ async function performUpdate(guild) {
         });
         
         if (corp.slug === 'pcesp') {
-          embedsToSendPcesp.push(embed);
+          if (pcespChannel) {
+            embedsToSendPcesp.push(embed);
+          } else {
+            embedsToSendMain.push(embed);
+          }
+        } else if (corp.slug === 'ft') {
+          if (ftChannel) {
+            embedsToSendFt.push(embed);
+          } else {
+            embedsToSendMain.push(embed);
+          }
         } else {
           embedsToSendMain.push(embed);
         }
@@ -371,6 +387,24 @@ async function performUpdate(guild) {
           useDefaultFooter: false,
         });
         await pcespChannel.send({ embeds: [emptyEmbed] });
+      }
+    }
+
+    if (ftChannel) {
+      if (embedsToSendFt.length > 0) {
+        for (let i = 0; i < embedsToSendFt.length; i += 10) {
+          const chunk = embedsToSendFt.slice(i, i + 10);
+          await ftChannel.send({ embeds: chunk });
+        }
+      } else {
+        const emptyEmbed = createBaseEmbed({
+          title: '⚡ FORÇA TÁTICA (FT)',
+          description: '*Nenhum oficial registrado no momento.*',
+          color: '#2E7D32',
+          useDefaultAuthor: false,
+          useDefaultFooter: false,
+        });
+        await ftChannel.send({ embeds: [emptyEmbed] });
       }
     }
 
