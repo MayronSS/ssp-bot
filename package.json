@@ -1,0 +1,29 @@
+{
+  "name": "lspd-bot",
+  "version": "2.0.0",
+  "description": "Bot Discord exclusivo da LSPD — Sistema de Tickets, Bate Ponto e Edital",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "lspd",
+    "tickets",
+    "ponto"
+  ],
+  "author": "LSPD",
+  "license": "ISC",
+  "dependencies": {
+    "discord-html-transcripts": "^3.2.0",
+    "discord.js": "^14.26.4",
+    "dotenv": "^16.4.7",
+    "mongoose": "^9.6.2"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}
